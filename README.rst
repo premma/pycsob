@@ -41,6 +41,7 @@ Basic usage:
 ------------
 
 To initialize the client you can use two ways. The first way is classical - use a path to private file and public file:
+
 .. code-block:: python
 
     from pycsob.client import CsobClient
@@ -50,6 +51,7 @@ To initialize the client you can use two ways. The first way is classical - use 
 
 The second way is used when there is a need to maintain more private and public files, that are uploaded and encrypted
 in database:
+
 .. code-block:: python
 
     from pycsob.client import CsobClient
