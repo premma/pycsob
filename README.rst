@@ -40,12 +40,24 @@ https://github.com/csob/paymentgateway/wiki/eAPI-v1.7
 Basic usage:
 ------------
 
+To initialize the client you can use two ways. The first way is classical - use a path to private file and public file:
 .. code-block:: python
 
     from pycsob.client import CsobClient
     c = CsobClient('MERCHANT_ID', 'https://iapi.iplatebnibrana.csob.cz/api/v1.7/',
                    '/path/to/your/private.key',
                    '/path/to/mips_iplatebnibrana.csob.cz.pub')
+
+The second way is used when there is a need to maintain more private and public files, that are uploaded and encrypted
+in database:
+.. code-block:: python
+
+    from pycsob.client import CsobClient
+    private_file_content: str = get_private_file_content_from_database(...)
+    public_file_content: str = get_public_file_content_from_database(...)
+    c = CsobClient('MERCHANT_ID', 'https://iapi.iplatebnibrana.csob.cz/api/v1.7/',
+                   private_file_content, public_file_content)
+
 
 Initialize payment. Outputs are requests's responses enriched by some properties
 like ``payload`` or ``extensions``.
