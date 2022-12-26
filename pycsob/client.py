@@ -25,8 +25,8 @@ class CsobClient(object):
 
         :param merchant_id: Your Merchant ID (you can find it in POSMerchant)
         :param base_url: Base API url development / production
-        :param private_key_file: Path to generated private key file
-        :param csob_pub_key_file: Path to CSOB public key
+        :param private_key_file: Path to generated private key file or content of the private file as string
+        :param csob_pub_key_file: Path to CSOB public key or content of the private file as string
         """
         self.merchant_id = merchant_id
         self.base_url = base_url

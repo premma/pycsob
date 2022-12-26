@@ -3,3 +3,4 @@ pytest-cov>=2.7.1
 urllib3-mock>=0.3.3
 freezegun
 testfixtures
+pytest-pycharm

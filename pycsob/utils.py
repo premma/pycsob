@@ -5,6 +5,9 @@ import requests
 from base64 import b64encode, b64decode
 from collections import OrderedDict
 from Crypto.Hash import SHA256
+from os import access, R_OK
+from os.path import isfile
+
 from Crypto.PublicKey import RSA
 from Crypto.Signature import PKCS1_v1_5
 
@@ -17,6 +20,23 @@ LOGGER = logging.getLogger('pycsob')
 
 class CsobVerifyError(Exception):
     pass
+
+
+def get_file_data(keyfile):
+    """
+    if the keyfile is a string, and it is a path to an existing file on disk, then the content of the file is
+    returned as a string, otherwise the content of the keyfile variable is returned.
+
+    :param keyfile: the path to a file or the content of the file.
+
+    """
+    if isinstance(keyfile, str) and isfile(keyfile) and access(keyfile, R_OK):
+        # the keyfile is a path to a file, so we open the file and return the data as bytes stream
+        with open(keyfile, "rb") as f:
+            content = f.read()
+        return content
+    else:
+        return keyfile
 
 
 class PyscobSession(requests.Session):
@@ -41,8 +61,7 @@ class PyscobSession(requests.Session):
 
 def sign(payload, keyfile):
     msg = mk_msg_for_sign(payload)
-    with open(keyfile, "rb") as f:
-        key = RSA.importKey(f.read())
+    key = RSA.importKey(get_file_data(keyfile))
     h = SHA256.new(msg)
     signer = PKCS1_v1_5.new(key)
     return b64encode(signer.sign(h)).decode()
@@ -50,8 +69,7 @@ def sign(payload, keyfile):
 
 def verify(payload, signature, pubkeyfile):
     msg = mk_msg_for_sign(payload)
-    with open(pubkeyfile, "rb") as f:
-        key = RSA.importKey(f.read())
+    key = RSA.importKey(get_file_data(pubkeyfile))
     h = SHA256.new(msg)
     verifier = PKCS1_v1_5.new(key)
     return verifier.verify(h, b64decode(signature))
