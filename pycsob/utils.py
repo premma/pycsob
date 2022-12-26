@@ -3,6 +3,9 @@ import datetime
 import re
 from base64 import b64encode, b64decode
 from collections import OrderedDict
+from os import access, R_OK
+from os.path import isfile
+
 from Crypto.Hash import SHA
 from Crypto.PublicKey import RSA
 from Crypto.Signature import PKCS1_v1_5
@@ -16,9 +19,24 @@ class CsobVerifyError(Exception):
     pass
 
 
+def get_file_data(keyfile):
+    """
+    if the keyfile is a string, and it is a path to an existing file on disk, then the content of the file is
+    returned as a string, otherwise the content of the keyfile variable is returned.
+
+    :param keyfile: the path to a file or the content of the file.
+
+    """
+    if isinstance(keyfile, str) and isfile(keyfile) and access(keyfile, R_OK):
+        # the keyfile is a path to a file, so we open the file and return the data as bytes stream
+        return open(keyfile).read()
+    else:
+        return keyfile
+
+
 def sign(payload, keyfile):
     msg = mk_msg_for_sign(payload)
-    key = RSA.importKey(open(keyfile).read())
+    key = RSA.importKey(get_file_data(keyfile))
     h = SHA.new(msg)
     signer = PKCS1_v1_5.new(key)
     return b64encode(signer.sign(h)).decode()
@@ -26,7 +44,7 @@ def sign(payload, keyfile):
 
 def verify(payload, signature, pubkeyfile):
     msg = mk_msg_for_sign(payload)
-    key = RSA.importKey(open(pubkeyfile).read())
+    key = RSA.importKey(get_file_data(pubkeyfile))
     h = SHA.new(msg)
     verifier = PKCS1_v1_5.new(key)
     return verifier.verify(h, b64decode(signature))
