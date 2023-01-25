@@ -59,7 +59,7 @@ in database:
     from pycsob.client import CsobClient
     private_file_content: str = get_private_file_content_from_database(...)
     public_file_content: str = get_public_file_content_from_database(...)
-    c = CsobClient('MERCHANT_ID', 'https://iapi.iplatebnibrana.csob.cz/api/v1.7/',
+    c = CsobClient('MERCHANT_ID', 'https://iapi.iplatebnibrana.csob.cz/api/v1.9/',
                    private_file_content, public_file_content)
 
 
