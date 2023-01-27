@@ -83,12 +83,14 @@ def mk_msg_for_sign(payload):
             cart_msg.extend(one.values())
         payload['cart'] = '|'.join(map(str_or_jsbool, cart_msg))
     msg = '|'.join(map(str_or_jsbool, payload.values()))
+    LOGGER.info("msg sign: {}".format(msg))
     return msg.encode('utf-8')
 
 
 def mk_payload(keyfile, pairs):
     payload = OrderedDict([(k, v) for k, v in pairs if v not in conf.EMPTY_VALUES])
     payload['signature'] = sign(payload, keyfile)
+    LOGGER.info("payload to sign: {}".format(payload))
     return payload
 
 
